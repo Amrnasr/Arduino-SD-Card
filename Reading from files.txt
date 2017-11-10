@@ -1,0 +1,47 @@
+The SD card library does not support 'long filenames' such as we are used to. Instead, it uses the 8.3 format for file names, so keep file names short! For example IMAGE.JPG is fine, and datalog.txt is fine but My GPS log file.text is not! Also keep in mind that short file names do not have 'case' sensitivity, so datalog.txt is the same file as DataLog.Txt is the same file as DATALOG.TXT
+Reading from files
+
+
+Next up we will show how to read from a file, it's very similar to writing in that we SD.open() the file but this time we don't pass in the argument FILE_WRITE this will keep you from accidentally writing to it. You can then call available() (which will let you know if there is data left to be read) and read() from the file, which will return the next byte.
+Copy Code
+#include <SD.h>
+ 
+File myFile;
+ 
+void setup()
+{
+  Serial.begin(9600);
+  Serial.print("Initializing SD card...");
+  // On the Ethernet Shield, CS is pin 4. It's set as an output by default.
+  // Note that even if it's not used as the CS pin, the hardware SS pin 
+  // (10 on most Arduino boards, 53 on the Mega) must be left as an output 
+  // or the SD library functions will not work. 
+   pinMode(10, OUTPUT);
+ 
+  if (!SD.begin(10)) {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization done.");
+ 
+  // open the file for reading:
+  myFile = SD.open("test.txt");
+  if (myFile) {
+    Serial.println("test.txt:");
+ 
+    // read from the file until there's nothing else in it:
+    while (myFile.available()) {
+    	Serial.write(myFile.read());
+    }
+    // close the file:
+    myFile.close();
+  } else {
+  	// if the file didn't open, print an error:
+    Serial.println("error opening test.txt");
+  }
+}
+ 
+void loop()
+{
+	// nothing happens after setup
+}
